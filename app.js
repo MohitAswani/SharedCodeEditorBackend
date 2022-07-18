@@ -4,8 +4,10 @@ const ACTION = require("./Actions");
 
 const app = express();
 
-app.get('/test',(req,res,next)=>{
-  console.log('App is working ;).');
+app.get("/test", (req, res, next) => {
+  console.log("App is working ;).");
+
+  return res.render("<h1>Success</h1>");
 });
 
 const server = app.listen(process.env.PORT || 8080);
@@ -64,7 +66,6 @@ io.on("connection", (socket) => {
 
   // SYNC CODE
   socket.on(ACTION.SYNC_CODE, ({ code, joinedSocketId }) => {
-    
     // We emit CODE_CHANGE SINCE CLIENT ALREADY LISTENING TO IT
     io.to(joinedSocketId).emit(ACTION.CODE_CHANGE, { code });
   });
