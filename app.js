@@ -4,6 +4,10 @@ const ACTION = require("./Actions");
 
 const app = express();
 
+app.get('/test',(req,res,next)=>{
+  console.log('App is working ;).');
+});
+
 const server = app.listen(process.env.PORT || 8080);
 
 const io = require("./socket").init(server, {
