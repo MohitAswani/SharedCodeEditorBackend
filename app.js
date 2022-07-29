@@ -48,6 +48,8 @@ io.on("connection", (socket) => {
       return;
     }
 
+    socket.emit(ACTION.ALL_USERS,clients);
+
     // Send msg to all the client about new client joining
     clients.forEach(({ socketId }) => {
       // Emitting event to each client in the room about the new user joining
