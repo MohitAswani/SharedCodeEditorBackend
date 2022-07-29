@@ -59,8 +59,6 @@ io.on("connection", (socket) => {
         username,
         sockedId: socket.id,
       });
-
-      io.to(socketId).emit(ACTION.ALL_USERS,clients);
     });
   });
 
