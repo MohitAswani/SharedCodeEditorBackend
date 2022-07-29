@@ -4,10 +4,9 @@ const ACTION = require("./Actions");
 
 const app = express();
 
-app.get("/test", (req, res, next) => {
+app.get("/", (req, res, next) => {
   console.log("App is working ;).");
-
-  return res.render("<h1>Success</h1>");
+  return res.send("<h1>Success</h1>");
 });
 
 const server = app.listen(process.env.PORT || 8080);
@@ -43,6 +42,12 @@ io.on("connection", (socket) => {
     socket.join(roomId);
     // Getting all the clients in that room
     const clients = getAllConnectedClients(roomId);
+
+    if (clients.length === 4) {
+      socket.emit(ACTION.ROOM_FULL);
+      return;
+    }
+
     // Send msg to all the client about new client joining
     clients.forEach(({ socketId }) => {
       // Emitting event to each client in the room about the new user joining
@@ -52,6 +57,23 @@ io.on("connection", (socket) => {
         username,
         sockedId: socket.id,
       });
+
+      io.to(socketId).emit(ACTION.ALL_USERS,clients);
+    });
+  });
+
+  socket.on(ACTION.SENDING_SIGNAL, (payload) => {
+    console.log(payload.userToSignal);
+    io.to(payload.userToSignal).emit(ACTION.RTC_USER_JOINED, {
+      signal: payload.signal,
+      callerID: payload.callerID,
+    });
+  });
+
+  socket.on(ACTION.RETURNING_SIGNAL, (payload) => {
+    io.to(payload.callerID).emit(ACTION.RECEIVE_RETURNED_SIGNAL, {
+      signal: payload.signal,
+      id: socket.id,
     });
   });
 
